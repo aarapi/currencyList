@@ -10,9 +10,6 @@ public class SendRequest extends AsyncTask<String, Integer, String> {
     private String request;
     private String requestURL;
 
-    public SendRequest(String requestURL) {
-        this.requestURL = requestURL;
-    }
 
     @Override
     protected void onPreExecute() {

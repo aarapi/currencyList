@@ -14,9 +14,7 @@ import java.net.URL;
 
 public class HttpUtil {
 
-    public static void main(String[] args){
-        getResponse("http://data.fixer.io/api/latest?access_key=2156c20147807a01dbad5bfbc1190771");
-    }
+
     public static String getResponse(String requestedURL){
         DataOutputStream wr = null;
         BufferedReader in = null;

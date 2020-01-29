@@ -26,7 +26,6 @@ import static com.example.fragments.utilities.HttpUtil.getResponse;
 public class MainActivity extends BaseActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
     private BottomNavigationView bottomNavigationView;
     private Fragment selectedFragment;
-    private FragmentHome fragmentHome;
     private Button button, testButton;
     private ImageView imageView;
 
@@ -34,9 +33,9 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SendRequest sendRequest = new SendRequest("http://data.fixer.io/api/latest?access_key=2156c20147807a01dbad5bfbc1190771");
+        SendRequest sendRequest = new SendRequest();
 
-        sendRequest.execute();
+        sendRequest.execute("http://data.fixer.io/api/latest?access_key=2156c20147807a01dbad5bfbc1190771");
 
 
   }
@@ -45,9 +44,6 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
     @Override
     public void initViews() {
         bottomNavigationView = findViewById(R.id.bt_navigation_menu);
-        fragmentHome = new  FragmentHome(fragmentManager);
-//        CustomLoadingBox  mDialog= new CustomLoadingBox(mContext);
-//        mDialog.setDialogView();
         customAlertBox  = new CustomAlertBox(this, "Hello","Try to escape", true);
         customAlertBox.showAlertBox();
         imageView = findViewById(R.id.iv_test);
@@ -55,8 +51,6 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
 
     @Override
     public void setViews() {
-        fragmentManager.beginTransaction().add(R.id.fr_fragment_container, fragmentHome).commit();
-        button = fragmentHome.getButton();
 
     }
 
