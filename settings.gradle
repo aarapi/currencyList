@@ -1,0 +1,2 @@
+include ':app', ':testlibrary', ':simplesearchview'
+rootProject.name='Fragments'
