@@ -1,15 +1,24 @@
 package com.example.fragments.tasks;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 
+import com.example.fragments.basemodels.BaseActivity;
+import com.example.fragments.basemodels.BaseFragment;
+import com.example.fragments.data.CurrencyList;
+import com.example.fragments.data.RatesEntity;
 import com.example.fragments.utilities.HttpUtil;
-
-import java.util.HashMap;
+import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
 
 public class SendRequest extends AsyncTask<String, Integer, String> {
     private String request;
-    private String requestURL;
+    private Activity baseActivity;
 
+    public SendRequest(Activity baseActivity) {
+        this.baseActivity = baseActivity;
+    }
 
     @Override
     protected void onPreExecute() {
@@ -21,6 +30,16 @@ public class SendRequest extends AsyncTask<String, Integer, String> {
         try {
             this.request = sendMessage[0];
             _rtn = getResponse(this.request);
+
+
+            Intent intent = new Intent(BaseFragment.ACTION_DATA_RECEIVER_BASE + 1);
+
+            intent.putExtra("action", 1);
+            intent.putExtra("data", _rtn);
+
+            baseActivity.sendBroadcast(intent);
+
+
         }catch (Exception e){
 
         }
@@ -33,9 +52,9 @@ public class SendRequest extends AsyncTask<String, Integer, String> {
     }
 
 
-    private String getResponse(String apiKey) {
+    private String getResponse(String url) {
 
-        String jsonResponse = HttpUtil.getResponse(this.requestURL);
+        String jsonResponse = HttpUtil.getResponse(url);
 
 
         return jsonResponse;

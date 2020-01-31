@@ -1,52 +1,63 @@
-package com.example.fragments.SecondActivities;
+package com.example.fragments.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.widget.Button;
+import android.view.View;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
-import com.example.fragments.BaseModels.BaseActivity;
-import com.example.fragments.Components.CustomAlertBox;
-import com.example.fragments.FragmentSearch;
-import com.example.fragments.FragmentTest;
-import com.example.fragments.FragmentHome;
+import com.example.fragments.basemodels.BaseActivity;
+import com.example.fragments.data.CurrencyModel;
+import com.example.fragments.fragments.FragmentCurrencyList;
 import com.example.fragments.R;
-import com.example.fragments.tasks.SendRequest;
+import com.example.fragments.fragments.FragmentCurrencyConverter;
+import com.example.fragments.utilities.CheckSetup;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.List;
 
-import static com.example.fragments.utilities.HttpUtil.getResponse;
 
-public class MainActivity extends BaseActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
-    private BottomNavigationView bottomNavigationView;
-    private Fragment selectedFragment;
-    private Button button, testButton;
-    private ImageView imageView;
+public class MainActivity extends BaseActivity implements BottomNavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+    private FragmentCurrencyList fragmentCurrencyList;
+    private BaseActivity activity;
+    private ViewPager2 viewPager;
+    private static final int NUM_PAGES = 2;
+    private List<CurrencyModel> currencyModels;
+
+    private ImageView iv_refresh, iv_menu;
+    /**
+     * The pager adapter, which provides the pages to the view pager widget.
+     */
+    private FragmentStateAdapter pagerAdapter;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SendRequest sendRequest = new SendRequest();
+        viewPager = findViewById(R.id.pager);
+        pagerAdapter = new ScreenSlidePagerAdapter(this);
+        viewPager.setAdapter(pagerAdapter);
+        activity = this;
 
-        sendRequest.execute("http://data.fixer.io/api/latest?access_key=2156c20147807a01dbad5bfbc1190771");
+
+
+
 
 
   }
 
-    CustomAlertBox customAlertBox;
     @Override
     public void initViews() {
-        bottomNavigationView = findViewById(R.id.bt_navigation_menu);
-        customAlertBox  = new CustomAlertBox(this, "Hello","Try to escape", true);
-        customAlertBox.showAlertBox();
-        imageView = findViewById(R.id.iv_test);
+        iv_menu = findViewById(R.id.iv_menu);
+        iv_refresh = findViewById(R.id.iv_refresh);
+
     }
 
     @Override
@@ -56,7 +67,8 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
 
     @Override
     public void bindEvents() {
-        bottomNavigationView.setOnNavigationItemSelectedListener(this);
+        iv_refresh.setOnClickListener(this);
+        iv_menu.setOnClickListener(this);
     }
 
     @Override
@@ -67,28 +79,20 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-        selectedFragment = null;
-         FragmentHome selectedFragment1 =null;
-        switch (menuItem.getItemId()){
-            case R.id.nav_home:
-                 selectedFragment = new FragmentHome(fragmentManager);
-                break;
-            case R.id.nav_countries:
-                selectedFragment = new FragmentTest();
 
-                break;
-            case R.id.nav_search:
-              selectedFragment = new   FragmentSearch(this);
-                break;
-        }
-        fragmentManager.beginTransaction()
-                .replace(R.id.fr_fragment_container, selectedFragment).commit();
         return true;
     }
 
     @Override
-    public void onDataReceive(int p_action, List<Object> p_list) {
-        super.onDataReceive(p_action, p_list);
+    public void onBackPressed() {
+        if (viewPager.getCurrentItem() == 0) {
+            // If the user is currently looking at the first step, allow the system to handle the
+            // Back button. This calls finish() on this activity and pops the back stack.
+            super.onBackPressed();
+        } else {
+            // Otherwise, select the previous step.
+            viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+        }
     }
 
     @Override
@@ -96,5 +100,49 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
         return this;
     }
 
+    @Override
+    public void onDataReceive(int action, String data) {
 
+
+        if (action == CheckSetup.LocalActions.ANNOYING_PROJECTS_GET_RATES_LIST) {
+            fragmentCurrencyList.onDataRecive(action, data);
+
+        }
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        fragmentCurrencyList.sendRequestMessage();
+    }
+
+    private class ScreenSlidePagerAdapter extends FragmentStateAdapter {
+        public ScreenSlidePagerAdapter(FragmentActivity fa) {
+            super(fa);
+        }
+
+        @Override
+        public Fragment createFragment(int position) {
+            if (position == 0) {
+                fragmentCurrencyList = new FragmentCurrencyList(activity);
+                return fragmentCurrencyList;
+            } else
+                return new FragmentCurrencyConverter(activity);
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return NUM_PAGES;
+        }
+    }
+
+    public List<CurrencyModel> getCurrencyModels() {
+        return currencyModels;
+    }
+
+    public void setCurrencyModels(List<CurrencyModel> currencyModels) {
+        this.currencyModels = currencyModels;
+    }
 }
+

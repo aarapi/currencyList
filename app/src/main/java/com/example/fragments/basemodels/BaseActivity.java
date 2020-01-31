@@ -1,4 +1,4 @@
-package com.example.fragments.BaseModels;
+package com.example.fragments.basemodels;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -11,16 +11,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
-import com.example.fragments.R;
+import com.example.fragments.tasks.SendRequest;
+import com.example.fragments.data.RequestModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class BaseActivity extends AppCompatActivity {
     public FragmentManager fragmentManager;
-
-    DataReceiver dataReceiver = new DataReceiver();
-    public Context mContext;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,35 +33,42 @@ public abstract class BaseActivity extends AppCompatActivity {
         initViews();
         setViews();
         bindEvents();
-        registerReceiver(dataReceiver, new IntentFilter("TEST_RECEIVER"));
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(dataReceiver);
     }
 
     public abstract void initViews();
     public abstract void bindEvents();
     public abstract void setViews();
     public abstract int getLayoutContent();
-    public abstract Activity getActivity();
-    public void onDataReceive(int p_action, List<Object> p_list) {}
-    public void testReceiver(){
-        Intent intent = new Intent();
-        intent.setAction("TEST_RECEIVER");
-        sendBroadcast(intent);
+
+    public void sendRequest(RequestModel requestModel) {
+
+        DataReceiver receiver = new DataReceiver();
+        String _action = BaseFragment.ACTION_DATA_RECEIVER_BASE + requestModel.p_action;
+        getActivity().registerReceiver(receiver, new IntentFilter(_action));
+
+        SendRequest sendRequest = new SendRequest(getActivity());
+        sendRequest.execute(requestModel.url);
     }
-    class DataReceiver extends BroadcastReceiver{
+    public abstract Activity getActivity();
+
+    class DataReceiver extends BroadcastReceiver {
         @Override
-        public void onReceive(Context context, Intent intent) {
-            List<Object> test = new ArrayList<>();
-            String testStr = "Hello";
-            test.add(testStr);
-            test.add(testStr);
-            onDataReceive(101, test);
+        public void onReceive(Context p_context, Intent p_intent) {
+            int _action = p_intent.getIntExtra("action", -1);
+            String data = p_intent.getStringExtra("data");
+
+            onDataReceive(_action, data);
+
         }
+    }
+
+    public void onDataReceive(int action, String data) {
+
     }
 }
 

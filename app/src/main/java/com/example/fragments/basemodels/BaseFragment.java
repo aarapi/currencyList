@@ -1,5 +1,6 @@
-package com.example.fragments.BaseModels;
+package com.example.fragments.basemodels;
 
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,9 +10,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.fragments.data.RequestModel;
+import com.example.fragments.tasks.SendRequest;
+
 public abstract class BaseFragment extends Fragment {
-public View containerView;
+    protected View containerView;
 private int layoutId;
+    public static String ACTION_DATA_RECEIVER_BASE = "com.example.fragments";
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -26,8 +31,11 @@ private int layoutId;
         initViews();
         setViews();
         bindEvents();
+        sendRequestMessage();
+
 
     }
+
 
     public BaseFragment(int layoutId) {
         this.layoutId = layoutId;
@@ -36,5 +44,11 @@ private int layoutId;
     public abstract void initViews();
     public abstract void bindEvents();
     public abstract void setViews();
+
+    protected void sendRequestMessage() {
+    }
+
+    ;
+
 
 }

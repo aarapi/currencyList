@@ -1,4 +1,4 @@
-package com.example.fragments.Adapters;
+package com.example.fragments.adapters;
 
 import java.util.ArrayList;
 
@@ -11,7 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.fragments.Data.Item;
+import com.example.fragments.data.Item;
 import com.example.fragments.R;
 
 /**

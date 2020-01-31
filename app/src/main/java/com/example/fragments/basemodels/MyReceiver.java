@@ -1,4 +1,4 @@
-package com.example.fragments.BaseModels;
+package com.example.fragments.basemodels;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

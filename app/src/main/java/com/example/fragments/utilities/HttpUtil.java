@@ -1,25 +1,37 @@
 package com.example.fragments.utilities;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.example.fragments.data.RatesEntity;
+import com.example.fragments.data.CurrencyList;
+import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 public class HttpUtil {
 
+    public static void main(String[] args) {
+        getResponse("http://data.fixer.io/api/latest?access_key=2156c20147807a01dbad5bfbc1190771");
+    }
+
 
     public static String getResponse(String requestedURL){
         DataOutputStream wr = null;
         BufferedReader in = null;
 
+
         try {
+            System.getProperties().put("https.proxyHost", "192.168.211.122");
+            System.getProperties().put("https.proxyPort", "3128");
+            System.getProperties().put("https.proxySet", "true");
+            System.getProperties().put("http.proxyHost", "192.168.211.122");
+            System.getProperties().put("http.proxyPort", "3128");
+            System.getProperties().put("http.proxySet", "true");
 
             URL url = new URL(requestedURL);
             HttpURLConnection connection  = (HttpURLConnection)url.openConnection();
@@ -49,18 +61,12 @@ public class HttpUtil {
             in.close();
             connection.disconnect();
 
-            JSONObject object = new JSONObject(response.toString());
-
-
-            return object.get("responseMessage").toString();
-
+            return response.toString();
 
         } catch (MalformedURLException e) {
 
         } catch (IOException e) {
 
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
 
         return null;

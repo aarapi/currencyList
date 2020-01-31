@@ -1,6 +1,4 @@
-package com.example.fragments.Data;
-
-import android.graphics.Bitmap;
+package com.example.fragments.data;
 
 public class Item {
    private int homeIcon;
