@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -13,6 +14,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.fragments.anim.IMAnimation;
 import com.example.fragments.basemodels.BaseActivity;
 import com.example.fragments.data.CurrencyModel;
 import com.example.fragments.fragments.FragmentCurrencyList;
@@ -57,6 +59,8 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
     public void initViews() {
         iv_menu = findViewById(R.id.iv_menu);
         iv_refresh = findViewById(R.id.iv_refresh);
+
+        iv_menu.setTag(R.drawable.ic_back);
 
     }
 
@@ -113,7 +117,47 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
 
     @Override
     public void onClick(View v) {
-        fragmentCurrencyList.sendRequestMessage();
+
+        if (v == iv_refresh) {
+            pagerAdapter = new ScreenSlidePagerAdapter(this);
+            viewPager.setAdapter(pagerAdapter);
+        } else if (v == iv_menu) {
+            int drawbleResource;
+            if ((Integer) iv_menu.getTag() == R.drawable.ic_menu) {
+                iv_menu.setTag(R.drawable.ic_back);
+                drawbleResource = R.drawable.ic_menu;
+            } else {
+                iv_menu.setTag(R.drawable.ic_menu);
+                drawbleResource = R.drawable.ic_back;
+            }
+            IMAnimation.fadeOut(iv_menu, 300, new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    iv_menu.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            iv_menu.setImageResource(drawbleResource);
+                            IMAnimation.fadeIn(iv_menu, 300, null);
+                        }
+                    }, 10);
+
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+        }
+
+
+
     }
 
     private class ScreenSlidePagerAdapter extends FragmentStateAdapter {
