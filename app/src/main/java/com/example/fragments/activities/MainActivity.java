@@ -20,6 +20,7 @@ import com.example.fragments.data.CurrencyModel;
 import com.example.fragments.fragments.FragmentCurrencyList;
 import com.example.fragments.R;
 import com.example.fragments.fragments.FragmentCurrencyConverter;
+import com.example.fragments.pager.ZoomOutPageTransformer;
 import com.example.fragments.utilities.CheckSetup;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -44,8 +45,10 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewPager = findViewById(R.id.pager);
+        viewPager.setPageTransformer(new ZoomOutPageTransformer());
         pagerAdapter = new ScreenSlidePagerAdapter(this);
         viewPager.setAdapter(pagerAdapter);
+
         activity = this;
 
 
